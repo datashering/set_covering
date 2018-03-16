@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define D2R 3.14159265358979323846/180
-#define R_MAX = 300
+#define R_MAX 100
 
 /*Estrutura de dados que guarda as informacoes do .dat*/
 typedef struct{
@@ -19,9 +19,9 @@ lat1, lng1 -> Latitude e longitude da primeira facilidade
 lat2, lng2 -> Latitude e longitude da segunda facilidade */
 float calc_dist(int n, float lat1, float lng1, float lat2, float lng2){
   float alpha;
-  float dist[n][n];
+  float dist;
 
-  alpha = sin(D2R*(lat1-lat2)/2)**2 + cos(D2R*lat1)*cos(D2R*lat2)*sin(D2r*(lng1-lng2)/2)**2;
+  alpha = pow(sin(D2R*(lat1-lat2)/2),2) + cos(D2R*lat1)*cos(D2R*lat2)*pow(sin(D2R*(lng1-lng2)/2),2);
   dist = 2*6371*atan2(sqrt(alpha), sqrt(1-alpha));
   return dist;
 
@@ -30,7 +30,7 @@ float calc_dist(int n, float lat1, float lng1, float lat2, float lng2){
 /*Função que lê o arquivo de dados e retorna uma struct com os parametros necessários para resolução do
 problema MIP
 f_nome -> Nome do arquivo .dat*/
-Data le_arquivo(char f_name){
+Data le_arquivo(char *f_name){
   Data data;
   FILE *f = fopen(f_name,"r");
 
@@ -46,36 +46,41 @@ Data le_arquivo(char f_name){
 
   /*Leitura do arquivo*/
   for(int i=0; i < data.n;i++){
-    fscanf(f,"%d ",&data.c[i]);
+    fscanf(f,"%d,", &data.c[i]);
+    printf("%d ", data.c[i]);
   }
+  printf("\n");
   for(int i=0; i <data.n; i++){
     fscanf(f,"%f,%f ",&lat[i],&lng[i]);
+    printf("%f ", lat[i]);
   }
   /*Geração da matrix de cobertura a com base na distancia esferica*/
   for(int i=0; i < data.n; i++){
     for(int j = 0; j < data.n; j++){
       if(calc_dist(data.n,lat[i],lng[i], lat[j],lng[j]) <= R_MAX){
-        data.a[i][j] == 1;
+        data.a[i][j] = 1;
       }
       else{
-        data.a[i][j] == 0;
+        //printf("\n\n\n\n ENTROOOOOOUUUUUU \n\n\n\n\n");
+        data.a[i][j] = 0;
       }
     }
   }
   free(lat);
   free(lng);
+  fclose(f);
   return data;
 }
 
 int main(void){
   /*Declaracao de variaveis*/
   glp_prob *lp;
-  Data data = le_arquivo(f);
-  int ia[1+1000], ja[1+1000];
+  char f_name[]= "sc.dat";
+  Data data = le_arquivo(f_name);
   int *x = (int*) malloc ((data.n+1) * sizeof(int));
-  int aux;
-  double ar[1+1000], z;
-  char f_nome[]= "sc.dat";
+
+  int ia[1000+1], ja[1000+1];
+  double ar[1000+1], z;
 
   /* Criacao do priblema */
   lp = glp_create_prob();
@@ -84,46 +89,56 @@ int main(void){
 
   /* Adicionando linhas (restricoes) */
   glp_add_rows(lp, data.n);
-  for (int aux=1; aux<=data.n; aux++){
-    //glp_set_row_name(lp, aux, "r%d");
-    glp_set_row_bnds(lp, aux, GLP_LO,1.0,0.0);
+  for (int i=1; i<=data.n; i++){
+    //glp_set_row_name(lp, i, "r%d");
+    glp_set_row_bnds(lp, i, GLP_LO, 1.0, 0.0);
   }
-  /* Adicionando columnas (variaveis) */
+
+  /* Adicionando colunas (variaveis) */
   glp_add_cols(lp,data.n);
-  for (int aux=1; aux<=data.n; aux++){
+  for (int j=1; j<=data.n; j++){
     //glp_set_col_name(lp, aux, "x%d");
-    glp_set_col_kind(lp, aux, GLP_BV);
+    glp_set_col_kind(lp, j, GLP_BV);
   }
 
   /* Adicionando funcao objetivo */
-  for(int aux=1; aux<=data.n; aux++){
-    glp_set_obj_coef(lp,aux,data.c[aux]);
+  for(int i=1; i<=data.n; i++){
+    //printf("%d:%d ",i, data.c[i-1]);
+    glp_set_obj_coef(lp,i,data.c[i-1]);
   }
 
   /* Adicionando coeficientes das restricoes */
+  int aux = 0;
   for(int i=1; i<=data.n;i++){
     for(int j=1; j<=data.n;j++){
-      ia[aux] = i, ja[aux] = j, ar[aux] = data.a[i-1][j-1];
       aux++;
+      ia[aux] = i, ja[aux] = j, ar[aux] = data.a[i-1][j-1];
     }
   }
   glp_load_matrix(lp, aux, ia, ja, ar);
 
   /* Obtencao da solucao apartir do metodo de branch and cut */
-  glp_intopt(lp, NULL);
+  glp_iocp param;
+  glp_init_iocp(&param);
+  param.presolve = GLP_ON;
+  glp_intopt(lp, &param);
 
   /* Display dos resultados */
-  z = glp_get_obj_val(lp);
+  z = glp_mip_obj_val(lp);
   printf("função objetivo: %g\n",z);
   for(int i=1; i<=data.n;i++){
-    x[i] = glp_get_col_prim(lp,i);
+    x[i] = glp_mip_col_val(lp,i);
     printf("x%d = %d,  ",i,x[i]);
   }
+  printf("\n");
 
   /* Desalocacao de memoria */
   glp_delete_prob(lp);
   glp_free_env();
   free(x);
+  free(data.c);
+  for(int i = 0; i<data.n; i++) free(data.a[i]);
+  free(data.a);
 
   return 0;
 }
