@@ -8,9 +8,10 @@
 
 /*Estrutura de dados que guarda as informacoes do .dat*/
 typedef struct{
-  int n;    // Número de localidades
-  int *c;   // Vetor com custos de abrir cada facilidade
-  int **a;  // Matrix binaria onde 1-> se a localidade j está dentro do raio de cobertura da localidade j
+  int n;         // Número de localidades
+  char **name; //Nome da cidade
+  int *c;        // Vetor com custos de abrir cada facilidade
+  int **a;       // Matrix binaria onde 1-> se a localidade j está dentro do raio de cobertura da localidade j
 }Data;
 
 /*Função que aplica que calcula a distancia esferica entre duas localidades
@@ -36,6 +37,10 @@ Data le_arquivo(char *f_name){
 
   /*Alocacao dinamica de memoria*/
   fscanf(f,"%d",&data.n);
+  data.name = (char**) malloc (data.n*sizeof(char*));
+  for(int i=0; i < data.n; i++){
+    data.name[i] = (char*) malloc (data.n*30*sizeof(char));
+  }
   data.c = (int*) malloc (data.n * sizeof(int));
   data.a = (int**) malloc (data.n*sizeof(int*));
   for(int i=0; i < data.n; i++){
@@ -46,13 +51,17 @@ Data le_arquivo(char *f_name){
 
   /*Leitura do arquivo*/
   for(int i=0; i < data.n;i++){
+    fscanf(f,"%s, ", data.name[i]);
+    //printf("%s-%d\n",data.name[i],i);
+  }
+  for(int i=0; i < data.n;i++){
     fscanf(f,"%d,", &data.c[i]);
-    printf("%d ", data.c[i]);
+    //printf("%d ", data.c[i]);
   }
   printf("\n");
   for(int i=0; i <data.n; i++){
     fscanf(f,"%f,%f ",&lat[i],&lng[i]);
-    printf("%f ", lat[i]);
+    //printf("%f ", lat[i]);
   }
   /*Geração da matrix de cobertura a com base na distancia esferica*/
   for(int i=0; i < data.n; i++){
@@ -124,18 +133,25 @@ int main(void){
   glp_intopt(lp, &param);
 
   /* Display dos resultados */
+  int sum = 0;
   z = glp_mip_obj_val(lp);
-  printf("função objetivo: %g\n",z);
   for(int i=1; i<=data.n;i++){
     x[i] = glp_mip_col_val(lp,i);
-    printf("x%d = %d,  ",i,x[i]);
+    if(x[i] == 1){
+      sum ++;
+      printf("\n%s -> %d",data.name[i-1],data.c[i-1]);
+    }
+    //printf("x%d = %d,  ",i,x[i]);
   }
-  printf("\n");
+  printf("\n\nFunção Objetivo: %g",z);
+  printf("\nNúmero de facilidades abertas: %d\n",sum);
 
   /* Desalocacao de memoria */
   glp_delete_prob(lp);
   glp_free_env();
   free(x);
+  for(int i = 0; i<data.n; i++) free(data.name[i]);
+  free(data.name);
   free(data.c);
   for(int i = 0; i<data.n; i++) free(data.a[i]);
   free(data.a);
