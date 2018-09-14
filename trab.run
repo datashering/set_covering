@@ -1,0 +1,7 @@
+reset;
+model C:\Users\Leni\Contacts\Desktop\trab.mod;
+data C:\Users\Leni\Contacts\Desktop\trab.dat;
+option solver cplex;
+solve;
+display custo;
+display x;

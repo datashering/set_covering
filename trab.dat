@@ -1,0 +1,106 @@
+param R := 400;
+
+set L := Alto_Capareo Antonio_Dias	Aracai	Araxa Arceburgo	Arcos Barao_de_Cocais Barbacena	Belo_Horizonte 	Bom_Despacho	Cachoeira_da_Prata 	Caete	Carvalhos	Confins	Conselheiro_Lafaiete 	Coronel_Fabriciano	Curvelo	Diamantina	Divinopolis	Formiga	Ipatinga	Juiz_de_Fora	Manhuacu 	Pouso_Alegre	Teofilo_Otoni	Timoteo 	Ubaí1		Ubai		Uberaba	Uberlandia	Vicosa;
+
+param lat  :=
+Alto_Capareo			-20.44436112 
+Antonio_Dias			-19.65146667
+Aracai					-19.20036386
+Araxa					-19.5913298
+Arceburgo				-21.36018148
+Arcos					-20.28256312
+Barao_de_Cocais  		-19.93584743
+Barbacena				-21.22491538
+Belo_Horizonte 			-19.93752429
+Bom_Despacho			-19.73759633
+Cachoeira_da_Prata	 	-19.52643533
+Caete					-19.88714113
+Carvalhos				-21.99670538
+Confins		 			-19.62994825
+Conselheiro_Lafaiete 	-20.6608518
+Coronel_Fabriciano		-19.52505284
+Curvelo					-18.75548072
+Diamantina				-18.24209272
+Divinopolis				-20.14207397
+Formiga					-20.46488355
+Ipatinga				-19.4810321
+Juiz_de_Fora			-21.76092431
+Manhuacu 				-20.25868008
+Pouso_Alegre			-22.230303
+Teofilo_Otoni			-17.86253981
+Timoteo 				-19.58405036
+Ubaí1					-21.11859695
+Ubai					-16.29740452
+Uberaba					-19.74592057
+Uberlandia				-18.91899861
+Vicosa					-20.75207201
+;
+
+param lng :=
+Alto_Capareo			-41.87308374
+Antonio_Dias			-42.86954521
+Aracai					-44.24692371
+Araxa					-46.94000989
+Arceburgo				-46.94435413
+Arcos					-45.54363187
+Barao_de_Cocais  		-43.48488247
+Barbacena				-43.77619332
+Belo_Horizonte 			-43.92645317
+Bom_Despacho		 	-45.2541152
+Cachoeira_da_Prata 		-44.44105095
+Caete					-43.66478735
+Carvalhos				-44.46601507
+Confins		 			-43.99559609
+Conselheiro_Lafaiete 	-43.78844466
+Coronel_Fabriciano		-42.62434658
+Curvelo					-44.42839897
+Diamantina				-43.59445682
+Divinopolis				-44.89388553
+Formiga 				-45.42642818
+Ipatinga				-42.52035111
+Juiz_de_Fora			-43.34881727
+Manhuacu 				-42.03384829
+Pouso_Alegre			-45.93714428
+Teofilo_Otoni			-41.50963517
+Timoteo 				-42.64394231
+Ubaí1					-42.93678646
+Ubai					-44.78708621
+Uberaba					-47.74371881
+Uberlandia				-48.27795018
+Vicosa					-42.87947738;
+
+param C :=
+Alto_Capareo 				200
+Antonio_Dias 				150
+Aracai		 				265
+Araxa		 				365
+Arceburgo 					125
+Arcos 						156
+Barao_de_Cocais  			225
+Barbacena 					345
+Belo_Horizonte 				575
+Bom_Despacho 				211
+Cachoeira_da_Prata		 	124
+Caete 						230
+Carvalhos 					240
+Confins 					420
+Conselheiro_Lafaiete	 	368
+Coronel_Fabriciano	 		375
+Curvelo 					240
+Diamantina 					356
+Divinopolis 				423
+Formiga		 				322
+Ipatinga 					458
+Juiz_de_Fora 				486
+Manhuacu 					365
+Pouso_Alegre 				400
+Teofilo_Otoni 				458
+Timoteo 					365
+Ubaí1 						450
+Ubai						158
+Uberaba 					265
+Uberlandia  				490
+Vicosa  					256
+;
+
+end;
